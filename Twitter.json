@@ -1,0 +1,239 @@
+[
+    {
+        "id": "29c3fd7b.089a12",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "b732d9b1.7649f8",
+        "type": "twitter-credentials",
+        "z": "",
+        "screen_name": "@umangini_7"
+    },
+    {
+        "id": "995c82b6.77f51",
+        "type": "websocket-listener",
+        "z": "",
+        "path": "/ws/example",
+        "wholemsg": "false"
+    },
+    {
+        "id": "98bd6a9a.17c688",
+        "type": "websocket-client",
+        "z": "",
+        "path": "https://twitter.com/",
+        "tls": "",
+        "wholemsg": "false"
+    },
+    {
+        "id": "23b4da57.957336",
+        "type": "mongodb",
+        "z": "",
+        "hostname": "127.0.0.1",
+        "port": "27017",
+        "db": "",
+        "name": ""
+    },
+    {
+        "id": "40c81323.04517c",
+        "type": "twitter in",
+        "z": "29c3fd7b.089a12",
+        "twitter": "b732d9b1.7649f8",
+        "tags": "#499",
+        "user": "false",
+        "name": "Reliance Jio",
+        "topic": "tweets",
+        "inputs": 1,
+        "x": 100,
+        "y": 180,
+        "wires": [
+            [
+                "3d635098.7f15e",
+                "576ffa1a.dd4aa4",
+                "ce722da5.223e7"
+            ]
+        ]
+    },
+    {
+        "id": "3d635098.7f15e",
+        "type": "debug",
+        "z": "29c3fd7b.089a12",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "x": 490,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "576ffa1a.dd4aa4",
+        "type": "sentiment",
+        "z": "29c3fd7b.089a12",
+        "name": "",
+        "property": "payload",
+        "x": 220,
+        "y": 100,
+        "wires": [
+            [
+                "1aee8ad9.19a9d5"
+            ]
+        ]
+    },
+    {
+        "id": "1aee8ad9.19a9d5",
+        "type": "function",
+        "z": "29c3fd7b.089a12",
+        "name": "",
+        "func": "var d = new Date();\nvar utc = d.getTime() - (d.getTimezoneOffset() * 60000);\nvar nd = new Date(utc + (3600000*+8));\nvar year = nd.getFullYear();\nvar month = nd.getMonth()+1; // 1-Jan, 2-Feb, etc.\nvar day = nd.getDate();\nvar hour = nd.getHours();\nvar minute = nd.getMinutes();\nvar second = nd.getSeconds();\nvar newMsg =\n{\n payload:\n {\n tweet: msg.payload,\n score: msg.sentiment.score,\n year: year,\n month: month,\n day: day,\n hour: hour,\n minute: minute,\n second: second\n }\n};\nreturn newMsg; ",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 410,
+        "y": 100,
+        "wires": [
+            [
+                "70dda227.d756ac",
+                "49918339.5e8d7c"
+            ]
+        ]
+    },
+    {
+        "id": "70dda227.d756ac",
+        "type": "debug",
+        "z": "29c3fd7b.089a12",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "x": 630,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "255552ea.34396e",
+        "type": "http in",
+        "z": "29c3fd7b.089a12",
+        "name": "",
+        "url": "/view_tweets",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 210,
+        "y": 380,
+        "wires": [
+            [
+                "aea69d64.92b14"
+            ]
+        ]
+    },
+    {
+        "id": "aea69d64.92b14",
+        "type": "mongodb in",
+        "z": "29c3fd7b.089a12",
+        "service": "_ext_",
+        "mongodb": "",
+        "name": "",
+        "collection": "",
+        "operation": "find",
+        "x": 460,
+        "y": 380,
+        "wires": [
+            [
+                "2e143206.dcd69e"
+            ]
+        ]
+    },
+    {
+        "id": "2e143206.dcd69e",
+        "type": "http response",
+        "z": "29c3fd7b.089a12",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 670,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "ce722da5.223e7",
+        "type": "mongodb out",
+        "z": "29c3fd7b.089a12",
+        "service": "_ext_",
+        "mongodb": "23b4da57.957336",
+        "name": "",
+        "collection": "sentiment",
+        "payonly": false,
+        "upsert": false,
+        "multi": false,
+        "operation": "store",
+        "x": 320,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "49918339.5e8d7c",
+        "type": "mongodb out",
+        "z": "29c3fd7b.089a12",
+        "service": "",
+        "name": "",
+        "collection": "",
+        "payonly": false,
+        "upsert": false,
+        "multi": false,
+        "operation": "store",
+        "x": 760,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "e7faa06c.de44c",
+        "type": "http in",
+        "z": "29c3fd7b.089a12",
+        "name": "",
+        "url": "/view_sentiments",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 120,
+        "y": 40,
+        "wires": [
+            [
+                "282821b1.a84ffe"
+            ]
+        ]
+    },
+    {
+        "id": "282821b1.a84ffe",
+        "type": "mongodb in",
+        "z": "29c3fd7b.089a12",
+        "service": "_ext_",
+        "mongodb": "23b4da57.957336",
+        "name": "",
+        "collection": "sentiments",
+        "operation": "count",
+        "x": 380,
+        "y": 40,
+        "wires": [
+            [
+                "6687c279.bd968c"
+            ]
+        ]
+    },
+    {
+        "id": "6687c279.bd968c",
+        "type": "http response",
+        "z": "29c3fd7b.089a12",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 590,
+        "y": 20,
+        "wires": []
+    }
+]
